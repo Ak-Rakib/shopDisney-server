@@ -29,9 +29,25 @@ async function run() {
     const dollCollection = client.db("shopDisney").collection("dolls");
 
 
+    // Get all Data
     app.get("/dolls", async(req, res) => {
         const getDollsData = await dollCollection.find().toArray();
         res.send(getDollsData);
+    });
+
+
+    // Filtering from database
+    app.get("/dolls/:text", async(req, res) => {
+        console.log(req.params.text);
+        if(req.params.text == "fDoll" || req.params.text == "aDoll" || req.params.text == "dDoll") {
+            const result = await dollCollection.find({
+                text: req.params.text
+            }).toArray();
+            console.log(result);
+            res.send(result);
+        }
+        const result = await dollCollection.find().toArray();
+        res.send(result);
     });
 
 
