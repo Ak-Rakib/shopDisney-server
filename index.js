@@ -46,7 +46,7 @@ async function run() {
       const id = (req.params.id);
       console.log(id)
       const query = { _id: new ObjectId(id) }
-      const result = dollCollection.findOne(query);
+      const result = await dollCollection.findOne(query);
       console.log(result)
       res.send(result);
     })
@@ -91,6 +91,18 @@ async function run() {
     app.get("/addCollection", async (req, res) => {
       const result = await addDollCollection.find().limit(20).toArray();
       res.send(result);
+    });
+
+
+
+    app.get("/addCollection/:email", async(req, res) => {
+      const email = req.query.email;
+      if(email){
+        const result = await addDollCollection.find({
+          email: req.query.email
+        }).toArray()
+        res.send(result);
+      }
     });
 
 
