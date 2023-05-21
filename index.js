@@ -42,7 +42,7 @@ async function run() {
 
 
     // Get data using id
-    app.get("/dolls/:id", async(req, res) => {
+    app.get("/dolls/:id", async (req, res) => {
       const id = (req.params.id);
       console.log(id)
       const query = { _id: new ObjectId(id) }
@@ -95,9 +95,18 @@ async function run() {
 
 
 
-    app.get("/addCollection/:email", async(req, res) => {
+    app.get("/addCollection/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) }
+      const result = await addDollCollection.findOne(query);
+      res.send(result);
+    });
+
+
+
+    app.get("/addCollection/:email", async (req, res) => {
       const email = req.query.email;
-      if(email){
+      if (email) {
         const result = await addDollCollection.find({
           email: req.query.email
         }).toArray()
@@ -116,9 +125,32 @@ async function run() {
     })
 
 
-    app.delete("/addCollection/:id", async(req, res) => {
+    app.put("/addCollection/:id", async (req, res) => {
       const id = req.params.id;
-      const query = {_id: new ObjectId(id)}
+      const filter = { _id: new ObjectId(id) }
+      const options = { upsert: true }
+      const updateDolls = req.body;
+      const Dolls = {
+        $set: {
+          name: updateDolls.name,
+          email: updateDolls.email,
+          toyName: updateDolls.toyName,
+          price: updateDolls.price,
+          rating: updateDolls.rating,
+          quantity: updateDolls.quantity,
+          category: updateDolls.category,
+          photoURL: updateDolls.photoURL,
+          details: updateDolls.details
+        }
+      }
+      const result = await addDollCollection.updateOne(filter, Dolls, options);
+      res.send(result);
+    });
+
+
+    app.delete("/addCollection/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) }
       const result = await addDollCollection.deleteOne(query);
       res.send(result)
     });
