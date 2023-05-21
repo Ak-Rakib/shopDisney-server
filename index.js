@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 require('dotenv').config()
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const port = process.env.PORT || 5000;
 
 // middleware
@@ -27,6 +27,7 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
     const dollCollection = client.db("shopDisney").collection("dolls");
+    const userDollCollection = client.db("shopDisney").collection("userCollection")
 
 
     // Get all Data
@@ -49,6 +50,25 @@ async function run() {
         const result = await dollCollection.find().toArray();
         res.send(result);
     });
+
+
+
+
+    // User Doll Collection
+    app.get("/userCollection", async(req, res) => {
+      const result = await userDollCollection.find().limit(20).toArray();
+      res.send(result);
+    });
+
+
+
+    app.post("/userCollection", async(req, res) => {
+        const body = req.body;
+        const result = await userDollCollection.insertOne(body);
+        console.log(result);
+        res.send(result);
+        
+    })
 
 
     // Send a ping to confirm a successful connection
